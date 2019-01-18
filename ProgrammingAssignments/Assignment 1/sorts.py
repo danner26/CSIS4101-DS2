@@ -21,7 +21,7 @@
 # merge_sort, and helper functions.  In general, you want to separate
 # output from the computation.  You'll be outputting results
 # (e.g., using print) in the if block at the bottom.
-import random
+import random, math
 
 def is_sorted(A) :
     """Returns True if A is sorted in non-decreasing order,
@@ -65,8 +65,8 @@ def insertion_sort(A) :
     Keyword arguments:
     A - a Python list.
     """
-    for index in range(1,len(A)):
-        curVal = A[index]; pos = index
+    for i in range(1,len(A)):
+        curVal = A[i]; pos = i
 
         while (pos > 0) and (A[pos-1] > curVal):
             A[pos] = A[pos-1]
@@ -82,11 +82,10 @@ def merge_sort(A) :
     A - a Python list.
     """
 
-    ## This function is the top level call, and should simply
-    ## call _merge_sort(A, p, r) passing the appropriate indices
-    ## to sort the entire list.
+    if len(A) == 0 or len(A) == 1:
+        pass
+    _merge_sort(A, 0, len(A)-1)
 
-    pass
 
 
 def _merge_sort(A, p, r) :
@@ -97,8 +96,16 @@ def _merge_sort(A, p, r) :
     p - left most index of portion of list to sort
     r - the right most index of portion of list to sort
     """
-
-    pass
+    if p < r: # check if list is greater than 1
+        # Split the List in half
+        mid = math.floor((p + r)/2)
+        # Merge Left and Right side
+        # Left side
+        _merge_sort(A, p, mid)
+        # Right side
+        _merge_sort(A, mid + 1, r)
+        # Merge function to join Left and Right side together
+        _merge(A, p, mid, r)
 
 
 def _merge(A, p, q, r) :
@@ -111,18 +118,26 @@ def _merge(A, p, q, r) :
     q - right most index of left sublist
     r - right most index of right sublist
     """
-
-    pass
+    # Assign left and right side of List
+    left = A[p:q + 1]
+    right = A[q + 1:r + 1]
+    # Append a number really big so program knows when to stop
+    left.append(99999999)
+    right.append(99999999)
+    # Create Pointers i & j
+    i = j = 0
+    # For loop to compare left and right side of List
+    for k in range(p, r + 1):
+        if left[i] <= right[j]:
+            A[k] = left[i]
+            i += 1
+        else:
+            A[k] = right[j]
+            j += 1
 
 
 
 if __name__ == "__main__" :
-    ## 2) Write a few lines of code to demonstrate that insertion_sort
-    ##    correctly sorts a list (your random_list function will be useful
-    ##    here).  Output (i.e., with print statements) the contents
-    ##    odf the list before sorting, and then again after sorting).
-    ## 3) Repeat 2 to demostrate that your merge_sort sorts correctly.
-
     ## Step 1
     unsortedArray = [2,5,3,6,4]
     sortedArray = [2,3,4,5,6]
@@ -131,9 +146,26 @@ if __name__ == "__main__" :
 
     ## Step 2
     print()
-    randomList = random_list(12)
+    print()
+    randomList = random_list(random.randint(1, 20))
     print("List before insertion sorting: %s" % randomList)
     insertion_sort(randomList)
     print("List after insertion sort: %s" % randomList)
+    if is_sorted(randomList):
+        print("The list is sorted!")
+    else:
+        print("The list is not sorted.");
+
+    # Step 3
+    print()
+    print()
+    randomList = random_list(random.randint(5, 20))
+    print("List before merge sorting: %s" % randomList)
+    merge_sort(randomList)
+    print("List after merge sorting: %s" % randomList)
+    if is_sorted(randomList):
+        print("The list is sorted!")
+    else:
+        print("The list is not sorted.");
 
     pass
