@@ -30,18 +30,18 @@ def is_sorted(A) :
     Keyword arguments:
     A - a Python list.
     """
-    iterator = iter(A)
-    next(iterator)
-    for x in A:
-        try:
-            if (x > next(iterator)):
-                del iterator
-                return False
-        except StopIteration:
-            pass
+    iterator = iter(A) # create a new iterator
+    next(iterator) # progress the iterator so the for loop with compare position 0 and 1
+    for x in A: # loop through all objects in the array
+        try: # we need the try loop to catch the end where there is nothing else to compare
+            if (x > next(iterator)): # if the current index value is greater than the next index value to the right
+                del iterator # deconstruct the iterator
+                return False # return false as it is not sorted
+        except StopIteration: # catch the end case where you cannot compare anything else (the last position)
+            pass # let the function end
 
-    del iterator
-    return True
+    del iterator # deconstruct the iterator
+    return True # return true as it is sorted
 
 
 def random_list(length, low_value=0, high_value=100) :
