@@ -54,7 +54,7 @@ def random_list(length, low_value=0, high_value=100) :
     low_value - the lower bound for the random integers.
     high_value - the upper bound for the random integers.
     """
-
+    # Single line that returns an array of length with random integers between low_value and high_value
     return [random.randint(low_value, high_value) for _ in range(length)]
 
 
@@ -65,12 +65,12 @@ def insertion_sort(A) :
     Keyword arguments:
     A - a Python list.
     """
-    for i in range(1,len(A)):
-        curVal = A[i]; pos = i
+    for i in range(1,len(A)): #loop through entire array using i as the position
+        curVal = A[i]; pos = i; #initiate variables
 
-        while (pos > 0) and (A[pos-1] > curVal):
-            A[pos] = A[pos-1]
-            pos = pos-1
+        while (pos > 0) and (A[pos-1] > curVal): #while the positions is gt 0 and the previous position is gt the current value
+            A[pos] = A[pos-1] #swap the variables
+            pos = pos-1 #move back to compare again
 
         A[pos]=curVal
 
@@ -82,9 +82,9 @@ def merge_sort(A) :
     A - a Python list.
     """
 
-    if len(A) == 0 or len(A) == 1:
-        pass
-    _merge_sort(A, 0, len(A)-1)
+    if len(A) == 0 or len(A) == 1: #if the array is empty or only contains one item
+        return #return and do not execute the merge sort
+    _merge_sort(A, 0, len(A)-1) #call the _merge_sort function and pass the list, left most index, and right most index
 
 
 
@@ -96,16 +96,12 @@ def _merge_sort(A, p, r) :
     p - left most index of portion of list to sort
     r - the right most index of portion of list to sort
     """
-    if p < r: # check if list is greater than 1
-        # Split the List in half
-        mid = math.floor((p + r)/2)
-        # Merge Left and Right side
-        # Left side
-        _merge_sort(A, p, mid)
-        # Right side
-        _merge_sort(A, mid + 1, r)
-        # Merge function to join Left and Right side together
-        _merge(A, p, mid, r)
+    if p < r: #check if list is greater than 1
+        mid = math.floor((p + r)/2) #split the list in half
+        #merge left and right halves
+        _merge_sort(A, p, mid) #left half
+        _merge_sort(A, mid + 1, r) #right half
+        _merge(A, p, mid, r) #merge function to join the left and right halves together
 
 
 def _merge(A, p, q, r) :
@@ -118,16 +114,12 @@ def _merge(A, p, q, r) :
     q - right most index of left sublist
     r - right most index of right sublist
     """
-    # Assign left and right side of List
-    left = A[p:q + 1]
-    right = A[q + 1:r + 1]
-    # Append a number really big so program knows when to stop
-    left.append(99999999)
-    right.append(99999999)
-    # Create Pointers i & j
-    i = j = 0
-    # For loop to compare left and right side of List
-    for k in range(p, r + 1):
+
+    left = A[p:q + 1]; right = A[q + 1:r + 1]; #assign left and right halves of the list
+    left.append(1000000); right.append(1000000); #append a large so we know when to stop
+    i = j = 0 #create Pointers i and j
+
+    for k in range(p, r + 1): #for loop to compare left and right halves of the list
         if left[i] <= right[j]:
             A[k] = left[i]
             i += 1
@@ -139,33 +131,31 @@ def _merge(A, p, q, r) :
 
 if __name__ == "__main__" :
     ## Step 1
-    unsortedArray = [2,5,3,6,4]
-    sortedArray = [2,3,4,5,6]
-    print("Unsorted Array %a: %s" % (unsortedArray, is_sorted(unsortedArray)))
-    print("Sorted Array %a: %s" % (sortedArray, is_sorted(sortedArray)))
+    unsortedArray = [2,5,3,6,4] #init an unsorted array to test the is_sorted function
+    sortedArray = [2,3,4,5,6] #init a sorted array to test the is_sorted function
+    print("Unsorted Array %a: %s" % (unsortedArray, is_sorted(unsortedArray))) #is_sorted returns False
+    print("Sorted Array %a: %s" % (sortedArray, is_sorted(sortedArray))) #is_sorted returns True
 
     ## Step 2
-    print()
-    print()
-    randomList = random_list(random.randint(1, 20))
-    print("List before insertion sorting: %s" % randomList)
-    insertion_sort(randomList)
-    print("List after insertion sort: %s" % randomList)
-    if is_sorted(randomList):
-        print("The list is sorted!")
+    print() #blank space for output
+    print() #blank space for output
+    randomList = random_list(random.randint(2, 20)) #init new randomList for insertion_sort
+    print("List before insertion sorting: %s" % randomList) #print randomList before insertion_sort'ing
+    insertion_sort(randomList) #insertion_sort the randomList
+    print("List after insertion sort: %s" % randomList) #print randomList after insertion_sort'ing
+    if is_sorted(randomList): #check if the list is sorted
+        print("The list is sorted!") #expected print result
     else:
-        print("The list is not sorted.");
+        print("The list is not sorted.") #this should not be printed
 
     # Step 3
-    print()
-    print()
-    randomList = random_list(random.randint(5, 20))
-    print("List before merge sorting: %s" % randomList)
-    merge_sort(randomList)
-    print("List after merge sorting: %s" % randomList)
-    if is_sorted(randomList):
-        print("The list is sorted!")
+    print() #blank space for output
+    print() #blank space for output
+    randomList = random_list(random.randint(5, 20)) #recycle randomList for merge_sort
+    print("List before merge sorting: %s" % randomList) #print randomList before merge_sort'ing
+    merge_sort(randomList) #merge_sort the randomList
+    print("List after merge sorting: %s" % randomList) #print randomList after merge_sort'ing
+    if is_sorted(randomList): #check if the list is sorted
+        print("The list is sorted!") #expected print result
     else:
-        print("The list is not sorted.");
-
-    pass
+        print("The list is not sorted."); #this should not be printed
