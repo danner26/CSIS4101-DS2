@@ -127,8 +127,11 @@ class Graph :
                 print(u, end="\t")
             print()
 
+    # Couldn't for the life of me figure out how to use the original print_graph methods
+    # to print the transposed graph, so I created a new one
+    # Just changed the self._adj to self._adj2
     def print_graph_2(self):
-        """Prints the graph of the transpose graph. Copied code from print_graph"""
+        """Prints the transpose graph graph."""
         for v, vList in enumerate(self._adj2):
             print(v, end=" -> ")
             for u in vList:
@@ -156,7 +159,7 @@ class Digraph(Graph) :
                 self.pre = None
 
         verts = [VertexData() for i in range(len(self._adj))]
-        deque = deque()
+        topDeque = deque()
         pos = 0
 
         def visit_dfs(i):
@@ -167,16 +170,16 @@ class Digraph(Graph) :
             verts[i].d = pos
             for j in self._adj[i]:
                 if verts[j].d == 0:
-                    verts[j].pred = i
+                    verts[j].pre = i
                     visit_dfs(j)
             pos += 1
             verts[i].f = pos
-            deque.appendleft(i)
+            topDeque.appendleft(i)
 
         for i in range(len(verts)):
             if verts[i].d == 0:
                 visit_dfs(i)
-        return deque
+        return topDeque
 
     def transpose(self) :
         """Computes the transpose of a directed graph. (See textbook page 616 for description of transpose).
@@ -184,33 +187,36 @@ class Digraph(Graph) :
         self._adj2 = [_AdjacencyList() for i in range(len(self._adj))]
         tList = []
 
-        for j, jList in enumerate(self._adj):
-            for k in jList:
-                self._adj2[k].add(j)
-                tList.insert(k, (k, j))
+        for i, iList in enumerate(self._adj):
+            for j in iList:
+                self._adj2[j].add(i)
+                tList.insert(j, (j, i))
 
-        return (Digraph(len(self._adj2), tList))
+        return Digraph(len(self._adj2), tList)
 
     def strongly_connected_components(self) :
         """Computes the strongly connected components of a digraph.
         Returns a list of lists, containing one list for each strongly connected component,
         which is simply a list of the vertices in that component."""
+        components = []
+        visited = set()
 
-        pass # Remove this pass statement after you implement this method.  Simply here temporarily.
+        sccTranspose = self.transpose()
 
-        #       Homework Hints/Suggestions/Etc: See algorithm on page 617.
-        #           1) Take a look at algorithm steps 1 and 2 before you do anything.  Notice that Step 1 computes finishing times with DFS,
-        #               and step 3 uses vertices in order of decreasing finishing times.  As in the topological sort, don't actually sort
-        #               by finishing time (to avoid O(V lg v) step).  However, this is easier than in the topological sort as you already
-        #               have a method that will get you what you need.  For step 1 of algorithm you can simply call your topological sort.
-        #               That will give you the vertices in decreasing order by finishing time, which is really the intention of algorithm line 1.
-        #           2) Line 2 is just the transpose and you implemented a method to compute this above.
-        #           3) The DFS in line 3 can be done in a couple ways.  The simplest is NOT to call DFS, but instead to reimplement it here.
-        #               In the outer loop, use the vertex ordering obtained from algorithm line 1 (to implement line 3).
-        #               And to do line 4, you'll need to have your code generate the list of lists for the return value.
+        def isVisited(i, SCCList=[]):
+            nonlocal visited
+            visited.add(i)
+            SCCList.append(i)
 
+            for j in sccTranspose._adj[i]:
+                if not j in visited:
+                    isVisited(j, SCCList)
+            return SCCList
 
-
+        for i in sccTranspose.topological_sort():
+            if not i in visited:
+                components.append(isVisited(i, []))
+        return components
 
 class _AdjacencyList :
 
@@ -262,9 +268,6 @@ class _AdjListIter :
         self._next = self._next._next
         return data
 
-
-
-
 if __name__ == "__main__" :
     # here is where you will implement any code necessary to confirm that your
     # topological sort, transpose, and strongly connected components methods work correctly.
@@ -272,14 +275,18 @@ if __name__ == "__main__" :
     # an import for use by another module.
 
     G = Digraph(6, [(1, 2), (1, 5), (2, 1), (2, 5), (2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 5), (4, 3), (5, 4), (5, 1), (5, 2)])
-    # G = Digraph(6, [(1, 2), (1, 5), (2, 1), (2, 5), (2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 5), (4, 3), (5, 4), (5, 1), (5, 2)])
     # G = Digraph(6, [(5, 2), (5, 0), (4, 0), (4, 1), (2, 3), (3, 1)])
     # G = Digraph(5, [(1, 0), (0, 2), (2, 1), (0, 3), (3, 4)])
+
+    #Print the initial graph
     print("Init Graph")
     G.print_graph()
 
-    print("Transpose Graph")
+    #Transpose the graph and print it
     G.transpose()
-    G.print_graph_2()
+    print("Transpose Graph")
+    G.print_graph_2() #use new print method for this
 
+    print("Strongly Connected Components")
+    print(G.strongly_connected_components())
     pass
