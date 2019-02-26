@@ -127,6 +127,14 @@ class Graph :
                 print(u, end="\t")
             print()
 
+    def print_graph_2(self):
+        """Prints the graph of the transpose graph. Copied code from print_graph"""
+        for v, vList in enumerate(self._adj2):
+            print(v, end=" -> ")
+            for u in vList:
+                print(u, end="\t")
+            print()
+
 
 
 
@@ -140,44 +148,48 @@ class Digraph(Graph) :
         """Topological Sort of the directed graph (Section 22.4 from textbook).
         Returns the topological sort as a list of vertex indices.
         """
+        class VertexData:
+            __pos__ = ['d', 'f', 'pre']
 
-        pass # Remove this pass statement after you implement this method.  Simply here temporarily.
+            def __init__(self):
+                self.d = 0
+                self.pre = None
 
-        #       Homework Hints/Suggestions/Etc:
-        #           1) Textbook indicates to use a Linked List.  Python doesn't have
-        #               one in the standard library.  Instead, use a deque (don't simply use
-        #               a python list since adding at the front is O(N) for a python list,
-        #               while it is O(1) for a deque).
-        #           2) From the pseudocode, you will be tempted to (a) call DFS, and then (b) sort
-        #               vertices by the finishing times.  However, don't do that since the sort will
-        #               cost O(V lg V) unnecessarily.
-        #           3) So, how do you do it without sorting?
-        #               Here is one of the ways to do it. Reimplement the DFS directly within topological_sort,
-        #               but initialize an empty list for the result toward the beginning of the method,
-        #               and then where the finishing time is set, add the vertex index to the front of that list.
-        #               And then make sure you return your list of vertices at the end.
+        verts = [VertexData() for i in range(len(self._adj))]
+        deque = deque()
+        pos = 0
 
+        def visit_dfs(i):
+            nonlocal pos
+            nonlocal verts
 
+            pos += 1
+            verts[i].d = pos
+            for j in self._adj[i]:
+                if verts[j].d == 0:
+                    verts[j].pred = i
+                    visit_dfs(j)
+            pos += 1
+            verts[i].f = pos
+            deque.appendleft(i)
+
+        for i in range(len(verts)):
+            if verts[i].d == 0:
+                visit_dfs(i)
+        return deque
 
     def transpose(self) :
         """Computes the transpose of a directed graph. (See textbook page 616 for description of transpose).
         Does not alter the self object.  Returns a new Digraph that is the transpose of self."""
+        self._adj2 = [_AdjacencyList() for i in range(len(self._adj))]
+        tList = []
 
-        pass # Remove this pass statement after you implement this method.  Simply here temporarily.
+        for j, jList in enumerate(self._adj):
+            for k in jList:
+                self._adj2[k].add(j)
+                tList.insert(k, (k, j))
 
-        #    Homework Hint: Make sure you don't change the graph.  Start by constructing a new Digraph
-        #                   object with the same number of vertices.
-        #                   If you want to construct a Digraph with v vertices, you'd do something like:
-        #                   t = Digraph(v)
-        #                   Once you have that, you'd then iterate over the edges of the original graph,
-        #                   and for each add an edge to t but with vertices in opposite order.
-        #     Another hint:  See the print_graph method above for an example of how to iterate over the edges
-        #                   of a graph.  Ignore the print statements in that example (you don't want to print anything here).
-        #                   That example iterates over the edges (v,u).  i.e., if you're in the body of the nested loop,
-        #                   then (v,u) is an edge of the graph you are iterating over.
-
-
-
+        return (Digraph(len(self._adj2), tList))
 
     def strongly_connected_components(self) :
         """Computes the strongly connected components of a digraph.
@@ -258,4 +270,16 @@ if __name__ == "__main__" :
     # topological sort, transpose, and strongly connected components methods work correctly.
     # Code in this if block will only run if you run this module, and not if you load this module with
     # an import for use by another module.
+
+    G = Digraph(6, [(1, 2), (1, 5), (2, 1), (2, 5), (2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 5), (4, 3), (5, 4), (5, 1), (5, 2)])
+    # G = Digraph(6, [(1, 2), (1, 5), (2, 1), (2, 5), (2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 5), (4, 3), (5, 4), (5, 1), (5, 2)])
+    # G = Digraph(6, [(5, 2), (5, 0), (4, 0), (4, 1), (2, 3), (3, 1)])
+    # G = Digraph(5, [(1, 0), (0, 2), (2, 1), (0, 3), (3, 4)])
+    print("Init Graph")
+    G.print_graph()
+
+    print("Transpose Graph")
+    G.transpose()
+    G.print_graph_2()
+
     pass
