@@ -1,3 +1,7 @@
+# Data Structures II
+# Programming Assignment 2
+# Note: code was partially provided by : Dr. Vincent A. Cicirello
+# Modified by: Daniel W. Anner
 from collections import deque
 import math
 
@@ -11,7 +15,7 @@ class Graph :
 
         Keyword arguments:
         v - number of vertices
-        edges - any iterable of ordered pairs indicating the edges 
+        edges - any iterable of ordered pairs indicating the edges
         """
 
         self._adj = [ _AdjacencyList() for i in range(v) ]
@@ -30,11 +34,11 @@ class Graph :
 
         self._adj[a].add(b)
         self._adj[b].add(a)
-    
+
 
     def num_vertices(self) :
         """Gets number of vertices of graph."""
-        
+
         return len(self._adj)
 
 
@@ -44,7 +48,7 @@ class Graph :
         Keyword arguments:
         vertex - integer id of vertex
         """
-        
+
         return self._adj[vertex]._size
 
     def bfs(self, s) :
@@ -55,7 +59,7 @@ class Graph :
         Keyword arguments:
         s - the integer id of the starting vertex.
         """
-        
+
         class VertexData :
             __slots__ = [ 'd', 'pred' ]
 
@@ -109,20 +113,20 @@ class Graph :
                 dfs_visit(u)
         return vertices
 
-        
 
-        
-    
+
+
+
 
     def print_graph(self) :
         """Prints the graph."""
-        
+
         for v, vList in enumerate(self._adj) :
             print(v, end=" -> ")
             for u in vList :
                 print(u, end="\t")
             print()
-            
+
 
 
 
@@ -136,7 +140,7 @@ class Digraph(Graph) :
         """Topological Sort of the directed graph (Section 22.4 from textbook).
         Returns the topological sort as a list of vertex indices.
         """
-        
+
         pass # Remove this pass statement after you implement this method.  Simply here temporarily.
 
         #       Homework Hints/Suggestions/Etc:
@@ -152,13 +156,13 @@ class Digraph(Graph) :
         #               but initialize an empty list for the result toward the beginning of the method,
         #               and then where the finishing time is set, add the vertex index to the front of that list.
         #               And then make sure you return your list of vertices at the end.
-        
+
 
 
     def transpose(self) :
         """Computes the transpose of a directed graph. (See textbook page 616 for description of transpose).
         Does not alter the self object.  Returns a new Digraph that is the transpose of self."""
-        
+
         pass # Remove this pass statement after you implement this method.  Simply here temporarily.
 
         #    Homework Hint: Make sure you don't change the graph.  Start by constructing a new Digraph
@@ -179,7 +183,7 @@ class Digraph(Graph) :
         """Computes the strongly connected components of a digraph.
         Returns a list of lists, containing one list for each strongly connected component,
         which is simply a list of the vertices in that component."""
-        
+
         pass # Remove this pass statement after you implement this method.  Simply here temporarily.
 
         #       Homework Hints/Suggestions/Etc: See algorithm on page 617.
@@ -192,7 +196,7 @@ class Digraph(Graph) :
         #           3) The DFS in line 3 can be done in a couple ways.  The simplest is NOT to call DFS, but instead to reimplement it here.
         #               In the outer loop, use the vertex ordering obtained from algorithm line 1 (to implement line 3).
         #               And to do line 4, you'll need to have your code generate the list of lists for the return value.
-   
+
 
 
 
@@ -215,7 +219,7 @@ class _AdjacencyList :
     def __iter__(self):
         return _AdjListIter(self)
 
-    
+
 
 class _AdjListNode :
 
@@ -225,7 +229,7 @@ class _AdjListNode :
         self._next = None
         self._data = data
 
-        
+
 
 class _AdjListIter :
 
@@ -255,10 +259,3 @@ if __name__ == "__main__" :
     # Code in this if block will only run if you run this module, and not if you load this module with
     # an import for use by another module.
     pass
-    
-
-
-
-
-    
-
