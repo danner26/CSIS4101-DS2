@@ -198,10 +198,8 @@ class Digraph(Graph) :
         """Computes the strongly connected components of a digraph.
         Returns a list of lists, containing one list for each strongly connected component,
         which is simply a list of the vertices in that component."""
-        components = []
+        comps = []
         visited = set()
-
-        sccTranspose = self.transpose()
 
         def isVisited(i, SCCList=[]):
             nonlocal visited
@@ -213,10 +211,12 @@ class Digraph(Graph) :
                     isVisited(j, SCCList)
             return SCCList
 
+        sccTranspose = self.transpose()
+
         for i in sccTranspose.topological_sort():
             if not i in visited:
-                components.append(isVisited(i, []))
-        return components
+                comps.append(isVisited(i, []))
+        return comps
 
 class _AdjacencyList :
 
