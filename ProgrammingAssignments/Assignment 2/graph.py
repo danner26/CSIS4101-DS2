@@ -151,18 +151,18 @@ class Digraph(Graph) :
         """Topological Sort of the directed graph (Section 22.4 from textbook).
         Returns the topological sort as a list of vertex indices.
         """
-        class VertexData:
+        class VertData:
             __pos__ = ['d', 'f', 'pre']
 
             def __init__(self):
                 self.d = 0
                 self.pre = None
 
-        verts = [VertexData() for i in range(len(self._adj))]
+        verts = [VertData() for i in range(len(self._adj))]
         topDeque = deque()
         pos = 0
 
-        def visit_dfs(i):
+        def dfs(i):
             nonlocal pos
             nonlocal verts
 
@@ -171,28 +171,28 @@ class Digraph(Graph) :
             for j in self._adj[i]:
                 if verts[j].d == 0:
                     verts[j].pre = i
-                    visit_dfs(j)
+                    dfs(j)
             pos += 1
             verts[i].f = pos
             topDeque.appendleft(i)
 
         for i in range(len(verts)):
             if verts[i].d == 0:
-                visit_dfs(i)
+                dfs(i)
         return topDeque
 
     def transpose(self) :
         """Computes the transpose of a directed graph. (See textbook page 616 for description of transpose).
         Does not alter the self object.  Returns a new Digraph that is the transpose of self."""
         self._adj2 = [_AdjacencyList() for i in range(len(self._adj))]
-        tList = []
+        tposList = []
 
         for i, iList in enumerate(self._adj):
             for j in iList:
                 self._adj2[j].add(i)
-                tList.insert(j, (j, i))
+                tposList.insert(j, (j, i))
 
-        return Digraph(len(self._adj2), tList)
+        return Digraph(len(self._adj2), tposList)
 
     def strongly_connected_components(self) :
         """Computes the strongly connected components of a digraph.
@@ -202,9 +202,10 @@ class Digraph(Graph) :
         visited = set()
 
         def isVisited(i, SCCList=[]):
+            SCCList.append(i)
+
             nonlocal visited
             visited.add(i)
-            SCCList.append(i)
 
             for j in sccTranspose._adj[i]:
                 if not j in visited:
