@@ -10,6 +10,11 @@ import timeit
 #     Given the output of steps 3 and 4, how does the runtime of Dijkstra's algorithm compare to Bellman-Ford?
 #     Does graph density affect performance?  Does size of the graph otherwise affect performance?
 #     Is Dijkstra always faster than Bellman-Ford?  If not, when is Bellman-Ford faster?
+#
+#     Dijkstra's algorithm is not always faster, but for larger sets of data it appears accoring to this data that
+#     Dijkstra's is faster. For smaller sets it appears Bellman-Fords is faster (mainly with a smaller amount of edges).
+#     The graph size, vertices and edges both effect the runtimes, as stated before Dijkstra's is faster for the larger
+#     sets of graph data.
 
 
 
@@ -492,7 +497,7 @@ class Digraph(Graph) :
             for u, w in vList.__iter__(True) :
                 if dist[u] != float("Inf") and dist[u] + w < dist[v]: #check for negative weights, if so return empty
                     return []
-                    
+
         return dist
 
 
