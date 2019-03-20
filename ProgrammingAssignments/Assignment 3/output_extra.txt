@@ -1,0 +1,26 @@
+Version             Vertices      Edges       Time
+-----------------------------------------------------
+Bellman Ford         16            32          0.47383
+Dijkstra             16            32          0.78579
+Bellman Ford         16            60          0.66975
+Dijkstra             16            60          0.93777
+Bellman Ford         16           240          2.27021
+Dijkstra             16           240          1.95797
+Bellman Ford         64           128          1.59341
+Dijkstra             64           128          3.28340
+Bellman Ford         64           672          5.62259
+Dijkstra             64           672          6.24328
+Bellman Ford         64          4032         31.33935
+Dijkstra             64          4032         22.54093
+Bellman Ford        256           512          5.89329
+Dijkstra            256           512         12.48975
+Bellman Ford        256          8160         64.92619
+Dijkstra            256          8160         49.63303
+Bellman Ford        256         65280        523.80311
+Dijkstra            256         65280        371.99851
+Bellman Ford        512          1024         14.13687
+Dijkstra            512          1024         25.70820
+Bellman Ford        512         96569        822.55613
+Dijkstra            512         96569        602.20237
+Bellman Ford        512        251632       2220.97449
+Dijkstra            512        251632       1637.68615
