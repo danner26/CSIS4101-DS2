@@ -1,11 +1,17 @@
+###
+# Author: Daniel W. Anner
+# Data Structures and Algorithms 2
+# Programming Assignment 4
+###
 
+import math
 # Add any relevant import statements up here.
 
 
 # Programming Assignment 4:
 # Follow the instuctions in comments throughout this file.
 # Don't rename any methods, attributes, functions, etc.
-# Also don't change order or type of parameters.  
+# Also don't change order or type of parameters.
 # You might consider doing the assignment in this order: 1, 2, 5, 6a, 3, 4, 6b.
 
 class WeightedAdjacencyMatrix :
@@ -33,13 +39,19 @@ class WeightedAdjacencyMatrix :
         """Initializes a weighted adjacency matrix for a graph with size nodes.
 
         Graph is initialized with size nodes and 0 edges.
-        
+
         Keyword arguments:
         size -- Number of nodes of the graph.
         """
+        self._W = [] #create out bare list
+        for i in range(size**2): #kwargs for size
+            self._W.append(math.inf) #init the weight to infinity
 
-        pass
-    
+        theMatrix = map(list, zip(*[iter(self._W)] * size)) #use zip to make iterator of tuples, and map to create list of results
+        self._W = list(theMatrix) # then convert the tuples to a list again
+        for i in range(size):
+            self._W[i][i] = 0 # set all the diagonals to 0
+
 
     # 2) Implement this method (see the provided docstring)
     def add_edge(self, u, v, weight) :
@@ -52,7 +64,7 @@ class WeightedAdjacencyMatrix :
         """
 
         pass
-    
+
 
     # 5) Implement this method (see the provided docstring)
     def floyd_warshall(self) :
@@ -66,7 +78,7 @@ class WeightedAdjacencyMatrix :
         """
 
         return None
-    
+
 
 
 # 3) Implement this function.  First note the lack of indentation.  This is not a method of the above class.
@@ -129,7 +141,7 @@ def haversine_distance(lat1, lng1, lat2, lng2) :
 #
 # Converting String that is a number to a number type:
 # float(s) will convert a string s that contains a floating-point number to a floating point number.
-# For example, 
+# For example,
 # s = "101.25"  # s is a string that happens to look like a floating-point number.
 # v = float(s)  # v will now have the floating-point value 101.25
 # Likewise, int(s) will do the same but for integer values.
