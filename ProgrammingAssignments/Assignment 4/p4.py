@@ -62,7 +62,7 @@ class WeightedAdjacencyMatrix :
         v -- target vertex id (0-based index)
         weight -- edge weight
         """
-        self._W[u][v] = weight
+        self._W[u][v] = weight #simply setting the weights
 
 
     # 5) Implement this method (see the provided docstring)
@@ -75,8 +75,17 @@ class WeightedAdjacencyMatrix :
         Extra Credit version: Returns a tuple (D, P) where D is a matrix consisting of the
         weights of the shortest paths between all pairs of vertices, and P is the predecessors matrix.
         """
+        D = [] # init our matrix
+        for i in range(len(self._W)):
+            D.append(self._W[i].copy()) # copy our elements to D, so we dont mess with our master list
 
-        return None
+        for i in range(len(D)): # iterate through the list
+            for j in range(len(D)): # second loop for our matrix
+                for k in range(len(D)): # last loop for our matrix
+                    if D[j][i] + D[i][k] < D[j][k]:
+                        D[j][k] = D[j][i] + D[i][k]
+
+        return D
 
 
 
