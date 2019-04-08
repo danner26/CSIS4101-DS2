@@ -75,10 +75,12 @@ class WeightedAdjacencyMatrix :
         Extra Credit version: Returns a tuple (D, P) where D is a matrix consisting of the
         weights of the shortest paths between all pairs of vertices, and P is the predecessors matrix.
         """
-        D = [] # init our matrix
+        D = [] # init our weight matrix
+        P = [] # init our predecessors list
         for i in range(len(self._W)):
             D.append(self._W[i].copy()) # copy our elements to D, so we dont mess with our master list
 
+        # TODO: add the logic to store predecessors for the extra credit
         for i in range(len(D)): # iterate through the list
             for j in range(len(D)): # second loop for our matrix
                 for k in range(len(D)): # last loop for our matrix
@@ -110,8 +112,24 @@ def haversine_distance(lat1, lng1, lat2, lng2) :
 
     Returns haversine distance in meters.
     """
+    lat1_r = math.radians(lat1) # convert the lat1 to radians
+    lat2_r = math.radians(lat2) # convert the lat2 to radians
+    lng1_r = math.radians(lng1) # convert the lng1 to radians
+    lng2_r = math.radians(lng2) # convert the lng2 to radians
 
-    return None
+    latdif = lat2_r - lat1_r # get the difference for the distance of latitude
+    lngdif = lng2_r - lng1_r # get the difference for the distance of longitude
+
+    i = math.sin(latdif / 2)**2
+    j = math.cos(lat1_r)
+    k = math.cos(lat2_r)
+    l = math.sin(lngdif / 2)**2
+
+    pre = i + j * k * l
+
+    answer = 2 * math.atan2(math.sqrt(pre), math.sqrt(1 - pre))
+
+    return 6378137 * answer
 
 
 # 4) Implement this function.  First note the lack of indentation.  This is not a method of the above class.
@@ -163,7 +181,79 @@ def parse_highway_graph_data(filename) :
     Returns a WeightedAdjacencyMatrix object.
     """
 
-    return None
+    with open(filename) as file:
+        list = []
+        list = file.readlines()
+
+        for word in list:
+            print("test", type(word))
+            list.append(word.split(',')) # split the words by the ,
+        for num in list[0]:
+            edgeList = num.split() # grab the vertices and edges from the file
+
+        # main for loops done, lets init our values for lat/lng
+        vertices = edgeList[0] # init the first vert to the edge vertifices list
+        vertices = int(vertices) # cast the vertices to int type
+        coordinates = [] # init lsit for coordinates
+        coordinateValues = [] # init list for coordinate values
+        edges = edgeList[1] # create edges list
+        edges = int(edges) # cast edges to int type
+        latitudeList = [] # init list for lat values
+        longitudeList = [] # init list for lng values
+
+        for val in list[1:vertices + 1]:
+            coordinates.append(val) # get the lat/lng coordinates from our file data
+
+        for index in range(len(coordinates)):
+            for val in coordinates[index]:
+                coordinateValues.append(val.split())  # get the lat/lng coordinate values from our file data
+
+        for val in coordinateValues: # add values to the list
+            x = val[1]
+            float(x) # cast to float  type
+            latitudeList.append(x) # cast to the latitue list
+            y = val[2]
+            float(y) # cast to float type
+            longitudeList.append(y) # append to the longitude list
+
+        # lat/lng done, init values to assign edges
+        edgeValues = []
+        actualEdges = []
+        splitEdges = []
+        edgeList1 = []
+        edgeList2 = []
+        for val in list[edges + 2:]:
+            edgeValues.append(val) # append the edge values
+        for val in edgeValues:
+            actualEdges.append(val) # append the actual values - this is a shim to get the proper Data
+            #TODO: condense this into one loop
+
+        for index in range(len(actualEdges)): # we need index locations
+            for val in actualEdges[index]: # for each value at this location
+                splitEdges.append(val.split()) # add the edges in the split format
+        for val in splitEdges: # add our data to the actual lists
+            x = val[0]
+            int(x)
+            edgeList1.append(x)
+            y = val[1]
+            int(y)
+            edgeList2.append(y)
+
+        matrix = WeightedAdjacencyMatrix(vertices) # add the values into a new matrix
+        for i in range(len(edgeList1)): # iterate through the edges - we only need to use one list to create the range, since they should be the same length
+            eStart = int(edgeList1[i]) # cast to int, create start
+            eEnd = int(edgeList2[i]) # cast to int, create end
+
+            latStart = float(latitudeList[eStart]) # cast to float, create start for latitude
+            latEnd = float(latitudeList[eEnd]) # cast to float, create end for latitue
+            lngStart = float(longitudeList[eStart]) # cast to float, create start for longitude
+            lngEnd = float(longitudeList[eEnd]) # cast to float, create end for longitude
+
+            dist = haversine_distance(latStart, lngStart, latEnd, lngEnd) # get the distance with our haversine distance method
+            matrix.add_edge(eStart, eEnd, dist) # add the edge
+            matrix.add_edge(eEnd, eStart, dist)
+
+        return matrix
 
 
 # 6a) This function should construct a WeightedAdjacencyMatrix object with the vertices and edges of your choice
@@ -172,8 +262,24 @@ def parse_highway_graph_data(filename) :
 # output the D matrix it returns using print statements (one row of matrix per line, columns separated by tabs).
 # If you also computed the predecessor matrix, then output that as well (print a blank line between the matrices).
 def test_with_your_own_graphs() :
+    m = WeightedAdjacencyMatrix(5)
 
-    pass
+    m.add_edge(0, 1, 8)
+    m.add_edge(1, 0, 8)
+    m.add_edge(2, 1, 3)
+    m.add_edge(1, 2, 3)
+    m.add_edge(2, 3, 7)
+    m.add_edge(3, 2, 7)
+    m.add_edge(3, 0, 14)
+    m.add_edge(4, 1, 9)
+    m.add_edge(1, 4, 9)
+    m.add_edge(0, 4, 12)
+    m.add_edge(4, 0, 12)
+
+    print("Floyd Warshall Graph")
+    g = m.floyd_warshall()
+    for i in g:
+        print(*i, sep='\t')
 
 
 # 6b) This function should use your parseHighwayGraphData to get a WeightedAdjacencyMatrix object corresponding
@@ -189,5 +295,16 @@ def test_with_your_own_graphs() :
 # Upload that graph when you submit your assignment (in case the page updates the data, this way I'll have the exact
 # graph that you used).
 def test_with_highway_graph(L) :
+    b = parse_highway_graph_data('inputs/IND-GJ-region.txt')
+    g = b.floyd_warshall()
 
-    pass
+    for i in g:
+        print(i)
+    for i in L:
+        print(i[0], i[1], g[i[0]][i[1]])
+
+if __name__ == "__main__":
+    print("IND-GJ-region Graph Data")
+    test_with_highway_graph([(1, 0), (2, 3)])
+    print("Test with own Graphs example")
+    test_with_your_own_graphs()
