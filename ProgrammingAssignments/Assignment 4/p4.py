@@ -62,8 +62,7 @@ class WeightedAdjacencyMatrix :
         v -- target vertex id (0-based index)
         weight -- edge weight
         """
-
-        pass
+        self._W[u][v] = weight
 
 
     # 5) Implement this method (see the provided docstring)
