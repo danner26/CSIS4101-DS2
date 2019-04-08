@@ -5,6 +5,7 @@
 ###
 
 import math
+import inspect
 # Add any relevant import statements up here.
 
 
@@ -125,11 +126,11 @@ def haversine_distance(lat1, lng1, lat2, lng2) :
     k = math.cos(lat2_r)
     l = math.sin(lngdif / 2)**2
 
-    pre = i + j * k * l
+    pre = i + j * k * l # do our precalc
 
-    answer = 2 * math.atan2(math.sqrt(pre), math.sqrt(1 - pre))
+    answer = 2 * math.atan2(math.sqrt(pre), math.sqrt(1 - pre)) # final calculation in radians
 
-    return 6378137 * answer
+    return 6378137 * answer # conver to meters from radians
 
 
 # 4) Implement this function.  First note the lack of indentation.  This is not a method of the above class.
@@ -180,15 +181,20 @@ def parse_highway_graph_data(filename) :
 
     Returns a WeightedAdjacencyMatrix object.
     """
+    endList = [] # init our end list (final parsed input)
+    latitudeList = [] # init list for lat values
+    longitudeList = [] # init list for lng values
+    edgeList1 = [] # init list for first edge list set
+    edgeList2 = [] # init list for second edge list set
 
     with open(filename) as file:
-        list = []
-        list = file.readlines()
 
+
+        for line in file:
+            list = file.readlines()
         for word in list:
-            print("test", type(word))
-            list.append(word.split(',')) # split the words by the ,
-        for num in list[0]:
+            endList.append(word.split(',')) # split the words by the ,
+        for num in endList[0]:
             edgeList = num.split() # grab the vertices and edges from the file
 
         # main for loops done, lets init our values for lat/lng
@@ -198,10 +204,8 @@ def parse_highway_graph_data(filename) :
         coordinateValues = [] # init list for coordinate values
         edges = edgeList[1] # create edges list
         edges = int(edges) # cast edges to int type
-        latitudeList = [] # init list for lat values
-        longitudeList = [] # init list for lng values
 
-        for val in list[1:vertices + 1]:
+        for val in endList[1:vertices + 1]:
             coordinates.append(val) # get the lat/lng coordinates from our file data
 
         for index in range(len(coordinates)):
@@ -217,12 +221,11 @@ def parse_highway_graph_data(filename) :
             longitudeList.append(y) # append to the longitude list
 
         # lat/lng done, init values to assign edges
-        edgeValues = []
-        actualEdges = []
-        splitEdges = []
-        edgeList1 = []
-        edgeList2 = []
-        for val in list[edges + 2:]:
+        edgeValues = [] # edge value list
+        actualEdges = [] # parsed edge list
+        splitEdges = [] # edge list of split values
+
+        for val in endList[edges + 2:]:
             edgeValues.append(val) # append the edge values
         for val in edgeValues:
             actualEdges.append(val) # append the actual values - this is a shim to get the proper Data
@@ -234,10 +237,10 @@ def parse_highway_graph_data(filename) :
         for val in splitEdges: # add our data to the actual lists
             x = val[0]
             int(x)
-            edgeList1.append(x)
+            edgeList1.append(x) # append the int val to the first edge list
             y = val[1]
             int(y)
-            edgeList2.append(y)
+            edgeList2.append(y) # append the int val to the second edge list
 
         matrix = WeightedAdjacencyMatrix(vertices) # add the values into a new matrix
         for i in range(len(edgeList1)): # iterate through the edges - we only need to use one list to create the range, since they should be the same length
@@ -295,16 +298,23 @@ def test_with_your_own_graphs() :
 # Upload that graph when you submit your assignment (in case the page updates the data, this way I'll have the exact
 # graph that you used).
 def test_with_highway_graph(L) :
-    b = parse_highway_graph_data('inputs/IND-GJ-region.txt')
-    g = b.floyd_warshall()
+    inputFilePrefix = 'inputs/' # base input folder (for printout making it a var)
+    inputFile = 'IND-GJ-region.txt' # file name
+    #inputFile = 'MAF-region.txt' # other option
+    #inputFile = 'IND-UT-region.txt' # last option
 
-    for i in g:
+    print("File: " + inputFilePrefix+inputFile)
+    matrix = parse_highway_graph_data(inputFilePrefix+inputFile) # parse the data to a matrix
+    goal = matrix.floyd_warshall()
+
+    for i in goal:
         print(i)
     for i in L:
-        print(i[0], i[1], g[i[0]][i[1]])
+        print(i[0], i[1], goal[i[0]][i[1]])
 
 if __name__ == "__main__":
-    print("IND-GJ-region Graph Data")
+    print("Graph Data")
     test_with_highway_graph([(1, 0), (2, 3)])
-    print("Test with own Graphs example")
+
+    print("\n\nTest with personally input graph example")
     test_with_your_own_graphs()
