@@ -59,41 +59,57 @@ def time_results() :
 
     T-length   P-Length   SequentialTime  ParallelTime
     """
-    def parallel_Time(T, P):
+    def parallelTime(T, P):
         """Uses timeit to time the parallel run time of any T and P. Returns the time. Note: The number is set to 10 which is not the most accurate however my computer started chugging after increasing passed 10 """
         time = timeit.timeit(lambda: p_naive_string_matcher(T, P), number=10)
         return time
 
-    def sequential_Time(T, P):
+    def sequentialTime(T, P):
         time = timeit.timeit(lambda: naive_string_matcher(T, P), number=10)
         return time
 
-    def increase_T(T, amount):
+    def increase(T, amount):
         copyOfT = T
         for i in range(amount):
             copyOfT += T * 5
         return copyOfT
 
     if __name__ == "__main__":
-        attempt1_increased = increase_T(attempt1_txt, 5)
-        attempt1_sequential = sequential_Time(attempt1_increased, attempt1_ptrn)
-        attempt1_parallel = parallel_Time(attempt1_increased, attempt1_ptrn)
+        # Pattern size 1
+        attempt1_txt = "dddddddddddddddddddddddddddddddddddddd"
+        attempt1_ptrn = "d"
+        # Pattern size 3
+        attempt2_txt = "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloByeHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello"
+        attempt2_ptrn = "Bye"
+        # Pattern size 4 (Large Text size)
+        attempt3_txt = "WelcomeToTheShowWeAreHappyToHaveYou"
+        attempt3_ptrn = "Show"
+        # Pattern size 8
+        attempt4_txt = "QuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFox"
+        attempt4_ptrn = "QuickFox"
+        # Pattern size 14
+        attempt5_txt = "==============--------------=============="
+        attempt5_ptrn = "=============="
 
-        attempt2_increased = increase_T(attempt2_txt, 10)
-        attempt2_sequential = sequential_Time(attempt2_increased, attempt2_ptrn)
-        attempt2_parallel = parallel_Time(attempt2_increased, attempt2_ptrn)
+        attempt1_increased = increase(attempt1_txt, 5)
+        attempt1_sequential = sequentialTime(attempt1_increased, attempt1_ptrn)
+        attempt1_parallel = parallelTime(attempt1_increased, attempt1_ptrn)
 
-        attempt3_increased = increase_T(attempt3_txt, 100)
-        attempt3_sequential = sequential_Time(attempt3_increased, attempt3_ptrn)
-        attempt3_parallel = parallel_Time(attempt3_increased, attempt3_ptrn)
+        attempt2_increased = increase(attempt2_txt, 10)
+        attempt2_sequential = sequentialTime(attempt2_increased, attempt2_ptrn)
+        attempt2_parallel = parallelTime(attempt2_increased, attempt2_ptrn)
 
-        attempt4_increased = increase_T(attempt4_txt, 1000)
-        attempt4_sequential = sequential_Time(attempt4_increased, attempt4_ptrn)
-        attempt4_parallel = parallel_Time(attempt4_increased, attempt4_ptrn)
+        attempt3_increased = increase(attempt3_txt, 100)
+        attempt3_sequential = sequentialTime(attempt3_increased, attempt3_ptrn)
+        attempt3_parallel = parallelTime(attempt3_increased, attempt3_ptrn)
 
-        attempt5_increased = increase_T(attempt5_txt, 10000)
-        attempt5_sequential = sequential_Time(attempt5_increased, attempt5_ptrn)
-        attempt5_parallel = parallel_Time(attempt5_increased, attempt5_ptrn)
+        attempt4_increased = increase(attempt4_txt, 1000)
+        attempt4_sequential = sequentialTime(attempt4_increased, attempt4_ptrn)
+        attempt4_parallel = parallelTime(attempt4_increased, attempt4_ptrn)
+
+        attempt5_increased = increase(attempt5_txt, 10000)
+        attempt5_sequential = sequentialTime(attempt5_increased, attempt5_ptrn)
+        attempt5_parallel = parallelTime(attempt5_increased, attempt5_ptrn)
 
         print('{:^15} {:^25} {:^30} {:^10}'.format("Text Length", "String Length", "Sequential Time", "Parallel Time"))
         print('{:^15} {:^25} {:^30} {:^10}'.format(len(attempt1_increased), len(attempt1_ptrn), attempt1_sequential, attempt1_parallel))
@@ -132,7 +148,7 @@ def naive_string_matcher(T, P) :
                 break
         if j == p - 1:
             list.append(i)
-    # print_results(list)
+
     return list
 
 
@@ -185,7 +201,6 @@ def p_naive_string_matcher(T, P) :
 
     for i in range(t - p + 1):
         checkList.append(i)
-
     help = partial(helper, T, P, p)
 
     for i in multipool.map(help, checkList):
@@ -198,21 +213,5 @@ def p_naive_string_matcher(T, P) :
 def helper(T, P, p, i):
     if P == T[i:i + p]:
         return i
-
-# Pattern size 1
-attempt1_txt = "dddddddddddddddddddddddddddddddddddddd"
-attempt1_ptrn = "d"
-# Pattern size 3
-attempt2_txt = "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloByeHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello"
-attempt2_ptrn = "Bye"
-# Pattern size 4 (Large Text size)
-attempt3_txt = "WelcomeToTheShowWeAreHappyToHaveYou"
-attempt3_ptrn = "Show"
-# Pattern size 8
-attempt4_txt = "QuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFox"
-attempt4_ptrn = "QuickFox"
-# Pattern size 14
-attempt5_txt = "==============--------------=============="
-attempt5_ptrn = "=============="
 
 time_results()
