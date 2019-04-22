@@ -59,20 +59,20 @@ def time_results() :
 
     T-length   P-Length   SequentialTime  ParallelTime
     """
-    def parallelTime(T, P):
-        """Uses timeit to time the parallel run time of any T and P. Returns the time. Note: The number is set to 10 which is not the most accurate however my computer started chugging after increasing passed 10 """
-        time = timeit.timeit(lambda: p_naive_string_matcher(T, P), number=10)
-        return time
-
-    def sequentialTime(T, P):
-        time = timeit.timeit(lambda: naive_string_matcher(T, P), number=10)
-        return time
-
     def increase(T, amount):
         copyOfT = T
         for i in range(amount):
             copyOfT += T * 5
         return copyOfT
+
+    def sequentialTime(T, P):
+        time = timeit.timeit(lambda: naive_string_matcher(T, P), number=10)
+        return time
+        
+    def parallelTime(T, P):
+        """Uses timeit to time the parallel run time of any T and P. Returns the time. Note: The number is set to 10 which is not the most accurate however my computer started chugging after increasing passed 10 """
+        time = timeit.timeit(lambda: p_naive_string_matcher(T, P), number=10)
+        return time
 
     if __name__ == "__main__":
         # Pattern size 1
