@@ -22,20 +22,35 @@
 #    Q1: After running time_results, fill in this table in this comment for whatever P and T lengths
 #        you tried (make sure you vary lengths from short to longer:
 #        T-length   P-Length   Sequential   Parallel
+#        Text Length         String Length              Sequential Time         Parallel Time
+#          988                     1                        0.005058            1.9547728
+#          6273                    3                  0.04049329999999984       1.9401059000000003
+#          17535                   4                  0.08526839999999991       2.0561283
+#          400080                  8                   2.027870499999999        3.2754221
+#          2100042                14                   22.553352600000004       10.027697799999999
 #
 #    Q2: How do the times (of both versions) vary by string length?  If T is held constant, and pattern P length varied, how does
 #        that affect runtime?  If P length is held constant, and text T length varied, how does that affect runtimes?
 #
+#        As the text length grew, the runtime increased at the same rate. AS the pattern length grew, the runtime also increated
+#        at the same rate. The runtimes increase of the pattern was lesser than the text increate.
+#
 #    Q3: At what lengths of P and/or T is the sequential version faster?
+#    When the text and patters were smaller, the sequential was smaller. When the lengths got larger, specificall string length 4, parallelism was faster.
 #
 #    Q4: At what lengths of P and/or T is the parallel version faster?
+#    As the text and patterns got larger, parallel time became faster.
 #
 #    Q5: Are the results consistent with the speedup you computed in Problem Set 4?  If not, what do you think caused
 #        the inconsistency with the theoretical speedup?
+#        The results are different from prblem set 4, as the costs time to add the processor should be in linear speedup times.
 
 
 # These are imports you will likely need.  Feel free to add any other imports that are necessary.
 from multiprocessing import Process, Pool
+import multiprocessing  # as mp
+import timeit
+from functools import partial
 
 
 def time_results() :
@@ -44,13 +59,52 @@ def time_results() :
 
     T-length   P-Length   SequentialTime  ParallelTime
     """
+    def parallel_Time(T, P):
+        """Uses timeit to time the parallel run time of any T and P. Returns the time. Note: The number is set to 10 which is not the most accurate however my computer started chugging after increasing passed 10 """
+        time = timeit.timeit(lambda: p_naive_string_matcher(T, P), number=10)
+        return time
 
-    
-    pass
+    def sequential_Time(T, P):
+        time = timeit.timeit(lambda: naive_string_matcher(T, P), number=10)
+        return time
+
+    def increase_T(T, amount):
+        copyOfT = T
+        for i in range(amount):
+            copyOfT += T * 5
+        return copyOfT
+
+    if __name__ == "__main__":
+        attempt1_increased = increase_T(attempt1_txt, 5)
+        attempt1_sequential = sequential_Time(attempt1_increased, attempt1_ptrn)
+        attempt1_parallel = parallel_Time(attempt1_increased, attempt1_ptrn)
+
+        attempt2_increased = increase_T(attempt2_txt, 10)
+        attempt2_sequential = sequential_Time(attempt2_increased, attempt2_ptrn)
+        attempt2_parallel = parallel_Time(attempt2_increased, attempt2_ptrn)
+
+        attempt3_increased = increase_T(attempt3_txt, 100)
+        attempt3_sequential = sequential_Time(attempt3_increased, attempt3_ptrn)
+        attempt3_parallel = parallel_Time(attempt3_increased, attempt3_ptrn)
+
+        attempt4_increased = increase_T(attempt4_txt, 1000)
+        attempt4_sequential = sequential_Time(attempt4_increased, attempt4_ptrn)
+        attempt4_parallel = parallel_Time(attempt4_increased, attempt4_ptrn)
+
+        attempt5_increased = increase_T(attempt5_txt, 10000)
+        attempt5_sequential = sequential_Time(attempt5_increased, attempt5_ptrn)
+        attempt5_parallel = parallel_Time(attempt5_increased, attempt5_ptrn)
+
+        print('{:^15} {:^25} {:^30} {:^10}'.format("Text Length", "String Length", "Sequential Time", "Parallel Time"))
+        print('{:^15} {:^25} {:^30} {:^10}'.format(len(attempt1_increased), len(attempt1_ptrn), attempt1_sequential, attempt1_parallel))
+        print('{:^15} {:^25} {:^30} {:^10}'.format(len(attempt2_increased), len(attempt2_ptrn), attempt2_sequential, attempt2_parallel))
+        print('{:^15} {:^25} {:^30} {:^10}'.format(len(attempt3_increased), len(attempt3_ptrn), attempt3_sequential, attempt3_parallel))
+        print('{:^15} {:^25} {:^30} {:^10}'.format(len(attempt4_increased), len(attempt4_ptrn), attempt4_sequential, attempt4_parallel))
+        print('{:^15} {:^25} {:^30} {:^10}'.format(len(attempt5_increased), len(attempt5_ptrn), attempt5_sequential, attempt5_parallel))
 
 def print_results(L) :
     """Prints the list of indices for the matches."""
-    pass
+    print(L)
 
 def naive_string_matcher(T, P) :
     """Naive string matcher algorithm from textbook page 988.
@@ -69,7 +123,17 @@ def naive_string_matcher(T, P) :
     T -- the text string to search for patterns.
     P -- the pattern string.
     """
-    pass
+    p = len(P)
+    t = len(T)
+    list = []
+    for i in range((t - p) + 1):
+        for j in range(p):
+            if T[i + j] != P[j]:
+                break
+        if j == p - 1:
+            list.append(i)
+    # print_results(list)
+    return list
 
 
 def p_naive_string_matcher(T, P) :
@@ -112,4 +176,43 @@ def p_naive_string_matcher(T, P) :
     T -- the text string to search for patterns.
     P -- the pattern string.
     """
-    pass
+    p = len(P)
+    t = len(T)
+    initList = []
+    checkList = []
+    matches = []
+    multipool = multiprocessing.Pool()
+
+    for i in range(t - p + 1):
+        checkList.append(i)
+
+    help = partial(helper, T, P, p)
+
+    for i in multipool.map(help, checkList):
+        if i is not None:
+            matches.append(i)
+
+    initList.append(matches)
+    return matches
+
+def helper(T, P, p, i):
+    if P == T[i:i + p]:
+        return i
+
+# Pattern size 1
+attempt1_txt = "dddddddddddddddddddddddddddddddddddddd"
+attempt1_ptrn = "d"
+# Pattern size 3
+attempt2_txt = "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloByeHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello"
+attempt2_ptrn = "Bye"
+# Pattern size 4 (Large Text size)
+attempt3_txt = "WelcomeToTheShowWeAreHappyToHaveYou"
+attempt3_ptrn = "Show"
+# Pattern size 8
+attempt4_txt = "QuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFoxQuickFox"
+attempt4_ptrn = "QuickFox"
+# Pattern size 14
+attempt5_txt = "==============--------------=============="
+attempt5_ptrn = "=============="
+
+time_results()
